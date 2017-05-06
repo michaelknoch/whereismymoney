@@ -1,24 +1,29 @@
 import fs from 'fs';
-import csv from 'csvtojson';
 
 const args = process.argv;
 const filepath = args[2];
 
-csvToJson(filepath).then((jsonData) => {
-    console.info(jsonData);
-});
+console.info(parseCsv(filepath));
 
-function csvToJson(filepath) {
-    const rows = [];
-    return new Promise((resolve, reject) => {
-        csv()
-            .fromFile(filepath)
-            .on('json', (json) => {
-                rows.push(json);
-            })
-            .on('done', (error) => {
-                console.log('end')
-                resolve(rows);
-            })
-    })
+function parseCsv(filepath) {
+    let keys = [];
+    const data = [];
+
+    fs.readFileSync(filepath).toString().split('\n').forEach((line, i) => {
+        const entriesForLine = line.split(';').map((entry) => entry.replace(/['"]+/g, '', ''));
+        if (i === 0) {
+            keys = entriesForLine;
+        } else {
+            data.push(rowToObject(entriesForLine, keys))
+        }
+    });
+    return data;
+}
+
+function rowToObject(row, keys) {
+    const rowObject = {};
+    row.forEach((entry, i) => {
+        rowObject[keys[i]] = entry
+    });
+    return rowObject;
 }
