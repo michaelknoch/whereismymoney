@@ -5,11 +5,11 @@ export default function parseCsv(filepath) {
     const data = [];
 
     fs.readFileSync(filepath).toString().split('\n').forEach((line, i) => {
-        const entriesForLine = line.split(';').map((entry) => entry.replace(/['"]+/g, '', ''));
+        const entriesForLine = line.split(';').map(entry => entry.replace(/['"]+/g, '', ''));
         if (i === 0) {
             keys = entriesForLine;
         } else {
-            data.push(rowToObject(entriesForLine, keys))
+            data.push(rowToObject(entriesForLine, keys));
         }
     });
     return data;
@@ -18,7 +18,7 @@ export default function parseCsv(filepath) {
 function rowToObject(row, keys) {
     const rowObject = {};
     row.forEach((entry, i) => {
-        rowObject[keys[i]] = entry
+        rowObject[keys[i]] = entry;
     });
     return rowObject;
 }
