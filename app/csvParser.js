@@ -5,14 +5,19 @@ export default function parseCsv(filepath) {
     const data = [];
 
     fs.readFileSync(filepath).toString().split('\n').forEach((line, i) => {
-        const entriesForLine = line.split(';').map(entry => entry.replace(/['"]+/g, '', ''));
+        const entriesForLine = line.split(';')
+            .map(entry => entry.replace(/['"]+/g, '', '').replace(',', '.'));
+
         if (i === 0) {
             keys = entriesForLine;
         } else {
             data.push(rowToObject(entriesForLine, keys));
         }
     });
-    return data;
+    return data.map(element => ({
+        ...element,
+        Betrag: parseFloat(element.Betrag),
+    }));
 }
 
 function rowToObject(row, keys) {
