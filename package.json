@@ -2,10 +2,10 @@
   "name": "whereismymoney",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "app",
   "scripts": {
-    "start": "babel *.js --watch --out-dir build",
-    "build": "babel *.js --out-dir build",
+    "start": "babel app --watch --out-dir build",
+    "build": "babel app --out-dir build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Michael Knoch",
