@@ -12,7 +12,7 @@ export default function (data) {
             };
         } else {
             calculated[recipient] = {
-                ...calculated[recipient],
+                ...elem,
                 total: elem.Betrag,
             };
         }
