@@ -1,6 +1,18 @@
 
 export default function (data) {
-    return groupDataByCategory(groupDataByCompany(data));
+    const groupedData = groupDataByCategory(groupDataByCompany(data));
+    return {
+        groupedData,
+        total: sumTotal(groupedData),
+    };
+}
+
+function sumTotal(data) {
+    let sum = 0;
+    Object.keys(data).forEach((elem) => {
+        sum += data[elem].total;
+    });
+    return sum;
 }
 
 function groupDataByCompany(data) {
@@ -59,8 +71,7 @@ export function getCategoryByCompany(string = '') {
         kreditkarte: ['KREDITKARTENABRECHNUNG'],
     };
 
-    const keys = Object.keys(categories);
-    for (const key of keys) {
+    for (const key of Object.keys(categories)) {
         for (const brand of categories[key]) {
             if (string.toLowerCase().includes(brand.toLowerCase())) return key;
         }
