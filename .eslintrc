@@ -75,7 +75,7 @@
         ],
         "quotes": [
             2,
-            "single",
+            "double",
             {
                 "avoidEscape": true
             }
@@ -83,6 +83,7 @@
         "semi": [
             "error",
             "always"
-        ]
+        ],
+        "arrow-parens": "disabled"
     }
 }

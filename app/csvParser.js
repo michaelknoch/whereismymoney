@@ -1,20 +1,24 @@
-import fs from 'fs';
+const fs = require("fs");
 
-export default function parseCsv(filepath) {
+function parseCsv(filepath) {
     let keys = [];
     const data = [];
 
-    fs.readFileSync(filepath).toString().split('\n').forEach((line, i) => {
-        const entriesForLine = line.split(';')
-            .map(entry => entry.replace(/['"]+/g, '', '').replace(',', '.'));
+    fs.readFileSync(filepath)
+        .toString()
+        .split("\n")
+        .forEach((line, i) => {
+            const entriesForLine = line
+                .split(";")
+                .map((entry) => entry.replace(/['"]+/g, "", "").replace(",", "."));
 
-        if (i === 0) {
-            keys = entriesForLine;
-        } else {
-            data.push(rowToObject(entriesForLine, keys));
-        }
-    });
-    return data.map(element => ({
+            if (i === 0) {
+                keys = entriesForLine;
+            } else {
+                data.push(rowToObject(entriesForLine, keys));
+            }
+        });
+    return data.map((element) => ({
         ...element,
         Betrag: parseFloat(element.Betrag),
     }));
@@ -27,3 +31,5 @@ function rowToObject(row, keys) {
     });
     return rowObject;
 }
+
+module.exports = parseCsv;

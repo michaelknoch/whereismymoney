@@ -1,6 +1,5 @@
-
-export default function (data) {
-    const groupedData = groupDataByCategory(groupDataByCompany(data));
+function calculate(data) {
+    const groupedData = groupDataByCategory(data);
     return {
         groupedData,
         total: sumTotal(groupedData),
@@ -15,42 +14,27 @@ function sumTotal(data) {
     return sum;
 }
 
-function groupDataByCompany(data) {
+function groupDataByCategory(data) {
     const groupedData = {};
 
-    data.forEach((elem) => {
-        if (elem.Betrag > 0 || !elem['Beguenstigter/Zahlungspflichtiger']) { return; }
-
-        const recipient = elem['Beguenstigter/Zahlungspflichtiger'];
-        if (groupedData[recipient]) {
-            groupedData[recipient] = {
-                ...groupedData[recipient],
-                total: groupedData[recipient].total + elem.Betrag,
-            };
-        } else {
-            groupedData[recipient] = {
-                ...elem,
-                total: elem.Betrag,
-            };
+    data.forEach((object) => {
+        if (!object || !object["Beguenstigter/Zahlungspflichtiger"] || object.Betrag > 0) {
+            return;
         }
-    });
-    return groupedData;
-}
 
-export function groupDataByCategory(data) {
-    const groupedData = {};
+        const group =
+            getCategoryByCompany(object["Verwendungszweck"]) ??
+            getCategoryByCompany(object["Beguenstigter/Zahlungspflichtiger"]) ??
+            object["Beguenstigter/Zahlungspflichtiger"];
 
-    Object.keys(data).forEach((key) => {
-        const object = data[key];
-        const group = getCategoryByCompany(object['Beguenstigter/Zahlungspflichtiger']);
         if (groupedData[group]) {
             groupedData[group] = {
-                total: groupedData[group].total + object.total,
+                total: groupedData[group].total + object.Betrag,
                 detail: [...groupedData[group].detail, object],
             };
         } else {
             groupedData[group] = {
-                total: object.total,
+                total: object.Betrag,
                 detail: [object],
             };
         }
@@ -58,23 +42,26 @@ export function groupDataByCategory(data) {
     return groupedData;
 }
 
+const categories = {
+    lebensmittel: ["edeka", "kaufland", "rewe", "lidl", "aldi"],
+    wohnung: ["ikea", "depot", "butlers"],
+    fix: ["Telefonica Germany", "BVG", "Michael Knoch", "Telekom"],
+    outfit: ["KARSTADT", "H&M", "Pull&Bear", "zalando"],
+    reisen: ["DB Vertrieb"],
+    paypal: ["PayPal"],
+    amazon: ["amazon"],
+    sparkasse: ["sparkasse"],
+    kreditkarte: ["KREDITKARTENABRECHNUNG"],
+};
 
-export function getCategoryByCompany(string = '') {
-    const categories = {
-        lebensmittel: ['edeka', 'kaufland', 'rewe', 'lidl', 'aldi'],
-        wohnung: ['ikea, depot', 'butlers'],
-        fix: ['Telefonica Germany', 'BVG', 'Michael Knoch'],
-        outfit: ['KARSTADT', 'H&M', 'Pull&Bear', 'zalando'],
-        paypal: ['PayPal'],
-        amazon: ['amazon'],
-        sparkasse: ['sparkasse'],
-        kreditkarte: ['KREDITKARTENABRECHNUNG'],
-    };
-
+function getCategoryByCompany(string = "") {
     for (const key of Object.keys(categories)) {
         for (const brand of categories[key]) {
-            if (string.toLowerCase().includes(brand.toLowerCase())) return key;
+            if (string.toLowerCase().includes(brand.toLowerCase())) {
+                return key;
+            }
         }
     }
-    return string;
 }
+
+module.exports = calculate;
